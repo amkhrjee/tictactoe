@@ -71,7 +71,8 @@ function draw() {
   }
 
   // Check for ties or wins
-  for (let row = 0; row < ROWS; row++) {}
+  // first row
+  // if (box[0][0] == box[1][0]) && ()
 }
 
 function mouseClicked() {
