@@ -72,6 +72,9 @@ function draw() {
   }
 }
 
+function IsEqual(a, b, c) {
+  return a.value == b.value && b.value == c.value && a.value != "";
+}
 // Parts of the code inspired by this video: https://www.youtube.com/watch?v=trKjYdBASyQ&t=73s
 function checkWinner() {
   let winner = null;
@@ -106,6 +109,7 @@ function checkWinner() {
 
 function minimax(depth, isItHuman) {
   let result = checkWinner();
+
   if (result != null) {
     switch (result) {
       case "tie":
@@ -125,15 +129,13 @@ function minimax(depth, isItHuman) {
         let score;
         if (board[col][row].value == "") {
           board[col][row].value = "X"; // the human ticker
-          score = minimax(depth + 1, !isItHuman);
+          score = minimax(depth + 1, false);
           board[col][row].value = "";
-        }
-        if (score < bestScore) {
-          bestScore = score;
-          return bestScore;
+          bestScore = min(bestScore, score);
         }
       }
     }
+    return bestScore;
   } else {
     // will try to maximize
     let bestScore = -Infinity;
@@ -142,15 +144,13 @@ function minimax(depth, isItHuman) {
         let score;
         if (board[col][row].value == "") {
           board[col][row].value = "O"; // the human ticker
-          score = minimax(depth + 1, !isItHuman);
+          score = minimax(depth + 1, true);
           board[col][row].value = "";
-        }
-        if (score > bestScore) {
-          bestScore = score;
-          return bestScore;
+          bestScore = max(score, bestScore);
         }
       }
     }
+    return bestScore;
   }
 }
 
@@ -173,6 +173,7 @@ function mouseClicked() {
       let score;
       if (board[col][row].value == "") {
         board[col][row].value = "O";
+        // this is the root so the depth is 0
         score = minimax(0, false); // the next move is by AI
         board[col][row].value = "";
       }
@@ -189,9 +190,7 @@ function mouseClicked() {
 
   // Check for ties or wins
   let winner = null;
-  function IsEqual(a, b, c) {
-    return a.value == b.value && b.value == c.value && a.value != "";
-  }
+
   // horizontal
   for (let i = 0; i < COLS; i++) {
     if (IsEqual(board[i][0], board[i][1], board[i][2])) {
@@ -221,7 +220,7 @@ function mouseClicked() {
     if (winner == "X") {
       document.getElementById("winner").innerHTML =
         "Rejoice! You just beat the AI 🎊 <br>You're safe from AI doom (for now)";
-    } else {
+    } else if (winner == "O") {
       document.getElementById("winner").innerHTML =
         "Alas! You've lost to the AI 😥 <br>A step closer to AI doom...";
     }
