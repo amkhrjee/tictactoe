@@ -55,7 +55,7 @@ function draw() {
           ellipse(
             cellX + cellWidth / 2,
             cellY + cellHeight / 2,
-            cellWidth - 2 * PADDING
+            cellWidth - 3 * PADDING
           );
         default:
           break;
