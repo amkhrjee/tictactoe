@@ -2,8 +2,9 @@ let COLS = 3;
 let ROWS = 3;
 let board = [];
 
-totalWidth = 600;
-totalHeight = totalWidth;
+const totalWidth = 600;
+const totalHeight = totalWidth;
+let available = COLS * ROWS;
 
 function setup() {
   const canvas = createCanvas(totalWidth, totalHeight);
@@ -69,16 +70,160 @@ function draw() {
       }
     }
   }
+}
 
-  // Check for ties or wins
-  // first row
-  // if (box[0][0] == box[1][0]) && ()
+// Parts of the code inspired by this video: https://www.youtube.com/watch?v=trKjYdBASyQ&t=73s
+function checkWinner() {
+  let winner = null;
+  function IsEqual(a, b, c) {
+    return a.value == b.value && b.value == c.value && a.value != "";
+  }
+  // horizontal
+  for (let i = 0; i < COLS; i++) {
+    if (IsEqual(board[i][0], board[i][1], board[i][2])) {
+      winner = board[i][0].value;
+    }
+  }
+
+  // Vertical
+  for (let i = 0; i < ROWS; i++) {
+    if (IsEqual(board[0][i], board[1][i], board[2][i])) {
+      winner = board[0][i].value;
+    }
+  }
+
+  // Diagonal
+  if (IsEqual(board[0][0], board[1][1], board[2][2])) {
+    winner = board[0][0].value;
+  }
+  if (IsEqual(board[2][0], board[1][1], board[0][2])) {
+    winner = board[2][0].value;
+  }
+
+  if (winner == null && available == 0) return "tie";
+  else return winner;
+}
+
+function minimax(depth, isItHuman) {
+  let result = checkWinner();
+  if (result != null) {
+    switch (result) {
+      case "tie":
+        return 0;
+      case "X":
+        return -1;
+      case "O":
+        return 1;
+    }
+  }
+
+  if (isItHuman) {
+    // will try to minimize
+    let bestScore = Infinity;
+    for (let row = 0; row < ROWS; row++) {
+      for (let col = 0; col < COLS; col++) {
+        let score;
+        if (board[col][row].value == "") {
+          board[col][row].value = "X"; // the human ticker
+          score = minimax(depth + 1, !isItHuman);
+          board[col][row].value = "";
+        }
+        if (score < bestScore) {
+          bestScore = score;
+          return bestScore;
+        }
+      }
+    }
+  } else {
+    // will try to maximize
+    let bestScore = -Infinity;
+    for (let row = 0; row < ROWS; row++) {
+      for (let col = 0; col < COLS; col++) {
+        let score;
+        if (board[col][row].value == "") {
+          board[col][row].value = "O"; // the human ticker
+          score = minimax(depth + 1, !isItHuman);
+          board[col][row].value = "";
+        }
+        if (score > bestScore) {
+          bestScore = score;
+          return bestScore;
+        }
+      }
+    }
+  }
 }
 
 function mouseClicked() {
+  document.getElementById("begin").style.display = "none";
+  document.getElementById("message").style.display = "block";
   let cellHeight = totalHeight / ROWS;
   let cellWidth = totalWidth / COLS;
   let selected = board[int(mouseX / cellWidth)][int(mouseY / cellHeight)].value;
-  board[int(mouseX / cellWidth)][int(mouseY / cellHeight)].value =
-    selected == "X" ? "O" : "X";
+  if (selected.length == "") {
+    board[int(mouseX / cellWidth)][int(mouseY / cellHeight)].value = "X";
+    available--;
+  }
+
+  // AI plays
+  let bestScore = -Infinity;
+  let move;
+  for (let row = 0; row < ROWS; row++) {
+    for (let col = 0; col < COLS; col++) {
+      let score;
+      if (board[col][row].value == "") {
+        board[col][row].value = "O";
+        score = minimax(0, false); // the next move is by AI
+        board[col][row].value = "";
+      }
+      // we're maxxing
+      if (score > bestScore) {
+        bestScore = score;
+        move = { col, row };
+      }
+    }
+  }
+
+  board[move.col][move.row].value = "O";
+  available--;
+
+  // Check for ties or wins
+  let winner = null;
+  function IsEqual(a, b, c) {
+    return a.value == b.value && b.value == c.value && a.value != "";
+  }
+  // horizontal
+  for (let i = 0; i < COLS; i++) {
+    if (IsEqual(board[i][0], board[i][1], board[i][2])) {
+      winner = board[i][0].value;
+    }
+  }
+
+  // Vertical
+  for (let i = 0; i < ROWS; i++) {
+    if (IsEqual(board[0][i], board[1][i], board[2][i])) {
+      winner = board[0][i].value;
+    }
+  }
+
+  // Diagonal
+  if (IsEqual(board[0][0], board[1][1], board[2][2])) {
+    winner = board[0][0].value;
+  }
+  if (IsEqual(board[2][0], board[1][1], board[0][2])) {
+    winner = board[2][0].value;
+  }
+
+  if (winner == null && available == 0) {
+    document.getElementById("winner").innerHTML =
+      "Tie!!! 👔<br>Are you an AI by any chance?";
+  } else {
+    if (winner == "X") {
+      document.getElementById("winner").innerHTML =
+        "Rejoice! You just beat the AI 🎊 <br>You're safe from AI doom (for now)";
+    } else {
+      document.getElementById("winner").innerHTML =
+        "Alas! You've lost to the AI 😥 <br>A step closer to AI doom...";
+    }
+  }
 }

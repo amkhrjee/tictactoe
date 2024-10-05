@@ -16,12 +16,43 @@ body {
   flex: 1;
   padding: 4rem;
   background-color: #11111b;
+  user-select: none;
 }
 
 h1 {
+  color: #f2cdcd;
+}
+
+h3 {
   color: #f5c2e7;
+}
+
+kbd {
+  font-size: larger;
+  font-weight: bolder;
+  text-decoration: underline;
+  border: solid 1px;
+  border-radius: 4px;
+  padding: 1px;
 }
 
 p {
   color: #cba6f7
+}
+
+a {
+  color: #89b4fa;
+}
+
+a:visited {
+  color: #b4befe;
+}
+
+#bignumber {
+  font-size: 4rem;
+  font-weight: bold;
+}
+
+#smallnumber {
+  font-weight: bolder;
 }

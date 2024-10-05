@@ -23,7 +23,38 @@
     <div id="canvas-container"></div>
     <div id="content">
         <h1>Tic-Tac-Toe with AI</h1>
-        <p>We use the <em>Minimax</em> algorithm to decide the next move for the AI.</p>
+        <p>We use the <a href="https://en.wikipedia.org/wiki/Minimax"><em>Minimax</em></a> algorithm to decide the next
+            move for the AI.</p>
+        <p>We're not using <a href="https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning">alpha-beta pruning</a>
+            (yet).</p>
+        <br>
+        <p>Tip: Press <kbd>Esc</kbd> to start over at any point</p>
+        <br>
+        <div style="display: none;" id="message">
+            <p><span id="bignumber">4200</span> possibilities evaluated for this step.</p>
+            <br>
+            <p>That makes a total of <span id="smallnumber">69000</span> evaluations.</p>
+        </div>
+        <div id="begin">
+            <p>⠀</p>
+            <p>⠀</p>
+            <p>⠀</p>
+            <br><br>
+            <h style="color: #74c7ec;">Click on any of the cells to begin!</d>
+        </div>
+        <br>
+        <!-- extremely dirty hack -->
+        <h3 id="winner">
+            ⠀
+            <br>
+            ⠀
+        </h3>
+        <br>
+        <p style="color: #94e2d5;">Made by <a href="https://amkhrjee.xyz">@amkhrjee</a> with <a
+                href="https://catppuccin.com/palette">p5.js</a> using the
+            <a href="https://catppuccin.com/palette">Catppuccin
+                Mocha</a> color scheme.
+        </p>
     </div>
 </body>
 
