@@ -5,6 +5,8 @@ let board = [];
 const totalWidth = 600;
 const totalHeight = totalWidth;
 let available = COLS * ROWS;
+let possibilties = 0;
+let cumulPossibility = possibilties;
 
 function setup() {
   const canvas = createCanvas(totalWidth, totalHeight);
@@ -128,6 +130,7 @@ function minimax(depth, isItHuman) {
       for (let col = 0; col < COLS; col++) {
         let score;
         if (board[col][row].value == "") {
+          possibilties++;
           board[col][row].value = "X"; // the human ticker
           score = minimax(depth + 1, false);
           board[col][row].value = "";
@@ -143,6 +146,7 @@ function minimax(depth, isItHuman) {
       for (let col = 0; col < COLS; col++) {
         let score;
         if (board[col][row].value == "") {
+          possibilties++;
           board[col][row].value = "O"; // the human ticker
           score = minimax(depth + 1, true);
           board[col][row].value = "";
@@ -165,64 +169,56 @@ function mouseClicked() {
     available--;
   }
 
-  // AI plays
-  let bestScore = -Infinity;
-  let move;
-  for (let row = 0; row < ROWS; row++) {
-    for (let col = 0; col < COLS; col++) {
-      let score;
-      if (board[col][row].value == "") {
-        board[col][row].value = "O";
-        // this is the root so the depth is 0
-        score = minimax(0, false); // the next move is by AI
-        board[col][row].value = "";
+  setTimeout(() => {
+    // AI plays
+    let bestScore = -Infinity;
+    let move;
+    for (let row = 0; row < ROWS; row++) {
+      for (let col = 0; col < COLS; col++) {
+        let score;
+        if (board[col][row].value == "") {
+          board[col][row].value = "O";
+          // this is the root so the depth is 0
+          score = minimax(0, false); // the next move is by AI
+          board[col][row].value = "";
+        }
+        // we're maxxing
+        if (score > bestScore) {
+          bestScore = score;
+          move = { col, row };
+        }
       }
-      // we're maxxing
-      if (score > bestScore) {
-        bestScore = score;
-        move = { col, row };
+    }
+
+    board[move.col][move.row].value = "O";
+    available--;
+
+    // Show stats
+    document.getElementById("bignumber").textContent = possibilties;
+    cumulPossibility += possibilties;
+    document.getElementById("smallnumber").textContent = cumulPossibility;
+    possibilties = 0;
+
+    // Check for ties or wins
+    let winner = checkWinner();
+
+    if (winner != null) {
+      switch (winner) {
+        case "tie":
+          document.getElementById("winner").innerHTML =
+            "Tie!!! 👔<br>Are you an AI by any chance?";
+          break;
+        case "X":
+          document.getElementById("winner").innerHTML =
+            "Rejoice! You just beat the AI 🎊 <br>You're safe from AI doom (for now)";
+          break;
+        case "O":
+          document.getElementById("winner").innerHTML =
+            "Alas! You've lost to the AI 😥 <br>A step closer to AI doom...";
+          break;
+        default:
+          break;
       }
     }
-  }
-
-  board[move.col][move.row].value = "O";
-  available--;
-
-  // Check for ties or wins
-  let winner = null;
-
-  // horizontal
-  for (let i = 0; i < COLS; i++) {
-    if (IsEqual(board[i][0], board[i][1], board[i][2])) {
-      winner = board[i][0].value;
-    }
-  }
-
-  // Vertical
-  for (let i = 0; i < ROWS; i++) {
-    if (IsEqual(board[0][i], board[1][i], board[2][i])) {
-      winner = board[0][i].value;
-    }
-  }
-
-  // Diagonal
-  if (IsEqual(board[0][0], board[1][1], board[2][2])) {
-    winner = board[0][0].value;
-  }
-  if (IsEqual(board[2][0], board[1][1], board[0][2])) {
-    winner = board[2][0].value;
-  }
-
-  if (winner == null && available == 0) {
-    document.getElementById("winner").innerHTML =
-      "Tie!!! 👔<br>Are you an AI by any chance?";
-  } else {
-    if (winner == "X") {
-      document.getElementById("winner").innerHTML =
-        "Rejoice! You just beat the AI 🎊 <br>You're safe from AI doom (for now)";
-    } else if (winner == "O") {
-      document.getElementById("winner").innerHTML =
-        "Alas! You've lost to the AI 😥 <br>A step closer to AI doom...";
-    }
-  }
+  }, 200);
 }
