@@ -59,7 +59,7 @@ function draw() {
           );
           break;
         case "O":
-          stroke(243, 139, 168);
+          stroke(250, 179, 135);
           ellipse(
             cellX + cellWidth / 2,
             cellY + cellHeight / 2,
