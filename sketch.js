@@ -147,7 +147,7 @@ function minimax(depth, isItHuman) {
         let score;
         if (board[col][row].value == "") {
           possibilties++;
-          board[col][row].value = "O"; // the human ticker
+          board[col][row].value = "O"; // the AI ticker
           score = minimax(depth + 1, true);
           board[col][row].value = "";
           bestScore = max(score, bestScore);
@@ -167,58 +167,58 @@ function mouseClicked() {
   if (selected.length == "") {
     board[int(mouseX / cellWidth)][int(mouseY / cellHeight)].value = "X";
     available--;
+
+    setTimeout(() => {
+      // AI plays
+      let bestScore = -Infinity;
+      let move;
+      for (let row = 0; row < ROWS; row++) {
+        for (let col = 0; col < COLS; col++) {
+          let score;
+          if (board[col][row].value == "") {
+            board[col][row].value = "O";
+            // this is the root so the depth is 0
+            score = minimax(0, true); // the next move is by human
+            board[col][row].value = "";
+          }
+          // we're maxxing
+          if (score > bestScore) {
+            bestScore = score;
+            move = { col, row };
+          }
+        }
+      }
+
+      board[move.col][move.row].value = "O";
+      available--;
+
+      // Show stats
+      document.getElementById("bignumber").textContent = possibilties;
+      cumulPossibility += possibilties;
+      document.getElementById("smallnumber").textContent = cumulPossibility;
+      possibilties = 0;
+
+      // Check for ties or wins
+      let winner = checkWinner();
+
+      if (winner != null) {
+        switch (winner) {
+          case "tie":
+            document.getElementById("winner").innerHTML =
+              "Tie!!! 👔<br>Are you an AI by any chance?";
+            break;
+          case "X":
+            document.getElementById("winner").innerHTML =
+              "Rejoice! You just beat the AI 🎊 <br>You're safe from AI doom (for now)";
+            break;
+          case "O":
+            document.getElementById("winner").innerHTML =
+              "Alas! You've lost to the AI 😥 <br>A step closer to AI doom...";
+            break;
+          default:
+            break;
+        }
+      }
+    }, 100);
   }
-
-  setTimeout(() => {
-    // AI plays
-    let bestScore = -Infinity;
-    let move;
-    for (let row = 0; row < ROWS; row++) {
-      for (let col = 0; col < COLS; col++) {
-        let score;
-        if (board[col][row].value == "") {
-          board[col][row].value = "O";
-          // this is the root so the depth is 0
-          score = minimax(0, false); // the next move is by AI
-          board[col][row].value = "";
-        }
-        // we're maxxing
-        if (score > bestScore) {
-          bestScore = score;
-          move = { col, row };
-        }
-      }
-    }
-
-    board[move.col][move.row].value = "O";
-    available--;
-
-    // Show stats
-    document.getElementById("bignumber").textContent = possibilties;
-    cumulPossibility += possibilties;
-    document.getElementById("smallnumber").textContent = cumulPossibility;
-    possibilties = 0;
-
-    // Check for ties or wins
-    let winner = checkWinner();
-
-    if (winner != null) {
-      switch (winner) {
-        case "tie":
-          document.getElementById("winner").innerHTML =
-            "Tie!!! 👔<br>Are you an AI by any chance?";
-          break;
-        case "X":
-          document.getElementById("winner").innerHTML =
-            "Rejoice! You just beat the AI 🎊 <br>You're safe from AI doom (for now)";
-          break;
-        case "O":
-          document.getElementById("winner").innerHTML =
-            "Alas! You've lost to the AI 😥 <br>A step closer to AI doom...";
-          break;
-        default:
-          break;
-      }
-    }
-  }, 200);
 }
