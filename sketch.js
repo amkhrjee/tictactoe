@@ -222,3 +222,19 @@ function mouseClicked() {
     }, 100);
   }
 }
+
+function keyPressed() {
+  if (key == "Escape") {
+    possibilties = 0;
+    for (let col = 0; col < COLS; col++) {
+      for (let row = 0; row < ROWS; row++) {
+        board[col][row].value = "";
+      }
+    }
+    available = COLS * ROWS;
+    cumulPossibility = 0;
+    document.getElementById("begin").style.display = "block";
+    document.getElementById("message").style.display = "none";
+    document.getElementById("winner").innerHTML = "⠀<br>⠀";
+  }
+}
